@@ -2,9 +2,9 @@ import { useState } from 'react';
 import * as sessionActions from '../../store/session';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import './LoginForm.css';
+import './LoginPage.css';
 
-function LoginFormPage() {
+function LoginPage() {
   const dispatch = useDispatch();
   const sessionUser = useSelector((state) => state.session.user);
   const [credential, setCredential] = useState("");
@@ -53,4 +53,4 @@ function LoginFormPage() {
   );
 }
 
-export default LoginFormPage;
+export default LoginPage;

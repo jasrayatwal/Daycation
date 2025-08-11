@@ -37,19 +37,6 @@ export const login = (user) => async (dispatch) => {
   return response;
 };
 
-const initialState = { user: null };
-
-const sessionReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case SET_USER:
-      return { ...state, user: action.payload };
-    case REMOVE_USER:
-      return { ...state, user: null };
-    default:
-      return state;
-  }
-};
-
 export const signup = (user) => async (dispatch) => {
   const { firstName, lastName, email, password } = user;
   try{
@@ -81,6 +68,19 @@ export const logout = () => async (dispatch) => {
   });
   dispatch(removeUser());
   return response;
+};
+
+const initialState = { user: null };
+
+const sessionReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case SET_USER:
+      return { ...state, user: action.payload };
+    case REMOVE_USER:
+      return { ...state, user: null };
+    default:
+      return state;
+  }
 };
 
 export default sessionReducer;
