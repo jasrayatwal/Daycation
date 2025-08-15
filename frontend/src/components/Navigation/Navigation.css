@@ -1,0 +1,40 @@
+.main-navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  padding: 10px 20px;
+  z-index: 1;
+  border: none;
+  box-shadow: none;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.nav-auth-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-auth-buttons button {
+  background: white;
+  border: 0.5px solid black;
+  color: var(--text-color);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 25px;
+}
+
+.nav-profile {
+  display: flex;
+  align-items: center;
+}
