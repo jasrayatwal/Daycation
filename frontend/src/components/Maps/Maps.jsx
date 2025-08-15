@@ -27,12 +27,6 @@ const Maps = ({
   });
 
   useEffect(() => {
-    console.log('useEffect:', {
-      rotate,
-      mapRefExists: !!mapRef.current,
-      mapLoaded
-    });
-
     if (!rotate) {
       console.log('Rotation disabled');
       return;
@@ -53,15 +47,12 @@ const Maps = ({
     const rotationSpeed = 0.50;
     const updateInterval = 50;
 
-    console.log('Starting map rotation...');
-
     const rotationInterval = setInterval(() => {
       angle += rotationSpeed;
       const lng = (angle % 360) - 180; //set to value between -180 and 180
 
       try {
         if (mapRef.current) {
-          console.log('Rotating to:', { lat: centerLat, lng });
           mapRef.current.panTo({ lat: centerLat, lng });
         }
       } catch (error) {
@@ -74,7 +65,6 @@ const Maps = ({
   }, [rotate, mapLoaded])
 
   const onLoad = (mapInstance) => {
-    console.log('Map instance loaded');
     mapRef.current = mapInstance;
     setMapLoaded(true);
   };
@@ -96,8 +86,6 @@ const Maps = ({
   if (!isLoaded) {
     return <div>Loading Map...</div>;
   }
-
-  console.log('Rendering...');
 
   return (
     <GoogleMap
