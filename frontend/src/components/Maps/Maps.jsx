@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 const defaultContainerStyle = { width: '400px', height: '400px' };
@@ -12,6 +12,7 @@ const Maps = ({
   rotate = false
 }) => {
   const mapRef = useRef(null);
+  const [mapLoaded, setMapLoaded] = useState(false); //check that map loaded
 
   const containerStyle = config.containerStyle || defaultContainerStyle;
   const center = config.center || defaultCenter;
@@ -26,12 +27,14 @@ const Maps = ({
   });
 
   useEffect(() => {
-    if (!rotate || !mapRef.current) return;
+    if (!rotate || !mapRef.current || !mapLoaded) return;
 
     let angle = 0;
     const centerLat = center.lat || 20;
     const rotationSpeed = 0.50;
     const updateInterval = 50;
+
+    console.log('Starting map rotation...');
 
     const rotationInterval = setInterval(() => {
       angle += rotationSpeed;
@@ -48,18 +51,17 @@ const Maps = ({
 
     return () => clearInterval(rotationInterval);
 
-  }, [center.lat, rotate])
+  }, [center.lat, rotate, mapLoaded])
 
   const onLoad = (mapInstance) => {
+    console.log('Map instance loaded');
     mapRef.current = mapInstance;
-    //try fixing by rotating after map loads
-    if (rotate) {
-      setTimeout(() => {
-        if (mapRef.current) {
-          console.log('Map loaded...starting rotation');
-        }
-      }, 100);
-    }
+    setMapLoaded(true);
+  };
+
+  const onUnmount = () => { //remove ref
+    mapRef.current = null;
+    setMapLoaded(false);
   };
 
   if (loadError) {
@@ -82,6 +84,7 @@ const Maps = ({
       zoom={zoom}
       options={options}
       onLoad={onLoad}
+      onUnmount={onUnmount}
       onClick={onMapClick}
     />
   );
