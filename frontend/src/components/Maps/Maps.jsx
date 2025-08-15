@@ -52,6 +52,14 @@ const Maps = ({
 
   const onLoad = (mapInstance) => {
     mapRef.current = mapInstance;
+    //try fixing by rotating after map loads
+    if (rotate) {
+      setTimeout(() => {
+        if (mapRef.current) {
+          console.log('Map loaded...starting rotation');
+        }
+      }, 100);
+    }
   };
 
   if (loadError) {
