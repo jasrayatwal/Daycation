@@ -4,6 +4,7 @@ const usersRouter = require('./users.js');
 const tripsRouter = require('./trips.js');
 const activitiesRouter = require('./activities.js');
 const mapsRouter = require('./maps');
+const aiRouter = require('./ai');
 const { restoreUser } = require('../../utils/auth.js');
 
 router.use(restoreUser);
@@ -13,5 +14,6 @@ router.use('/users', usersRouter);
 router.use('/trips', tripsRouter);
 router.use('/activities', activitiesRouter);
 router.use('/maps', mapsRouter);
+router.use('/ai', aiRouter);
 
 module.exports = router;

@@ -1,0 +1,186 @@
+.trip-generation-modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 500px;
+  max-height: 80%;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgb(0.0, 0.0, 0.0, 0.1);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.preferences-form {
+  padding: 20px;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 95%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--text-color);
+}
+
+.time-row,
+.budget-group-row,
+.experience-row {
+  display: flex;
+  gap: 20px;
+}
+
+.time-row .form-group,
+.budget-group-row .form-group,
+.experience-row .form-group {
+  flex: 1;
+}
+
+.trip-generation-modal-buttons {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  gap: 15px;
+}
+
+.generate-button,
+.save-trip-button,
+.generate-new-button {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.generate-button,
+.save-trip-button {
+  background: var(--text-color);
+  color: white;
+}
+
+.generate-button:hover,
+.save-trip-button:hover {
+  background: #135a6b;
+}
+
+.generate-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.generate-new-button {
+  background: white;
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+}
+
+.generate-new-button:hover {
+  background: #f5f5f5;
+}
+
+.generated-trip-content {
+  padding: 20px;
+}
+
+.trip-overview {
+  margin-bottom: 20px;
+}
+
+.trip-overview h3 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.trip-overview p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.activities-preview h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.activity-preview {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.activity-time {
+  padding: 19px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
+
+.activity-info h5 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.activity-info p {
+  margin: 2px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.activity-cost {
+  padding: 19px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.more-activities {
+  text-align: center;
+  padding: 10px;
+  color: #666;
+  font-style: italic;
+}
+
+.close-button {
+  background-color: var(--text-color);
+  color: white;
+  cursor: pointer;
+}

@@ -2,11 +2,12 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getKey } from '../../store/maps';
 import Maps from '../Maps/Maps';
-import { defaultMapStyle } from '../../config/mapStyles';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import './LandingPage.css';
 
 function LandingPage() {
   const key = useSelector((state) => state.maps.key);
+  const landingMapId = useSelector((state) => state.maps.landingMapId);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -15,7 +16,7 @@ function LandingPage() {
     }
   }, [dispatch, key]);
 
-  if (!key) {
+  if (!key || !landingMapId) {
     return (
       <div>Loading map...</div>
     )
@@ -23,22 +24,20 @@ function LandingPage() {
 
   const mapConfig = {
     center: { lat: 20, lng: -103.771556 },
-    zoom: 4,
-    mapTypeId: 'roadmap',
+    zoom: 3.25,
+    mapId: landingMapId,
     containerStyle: {
       width: '100vw',
       height: '100vh'
     },
-    options: {
       gestureHandling: 'greedy',
       minZoom: 2,
       maxZoom: 15,
-      disableDefaultUI: true,
-      styles: defaultMapStyle
-    }
+      disableDefaultUI: true
   }
 
   return (
+    <APIProvider apiKey={key}>
     <div className="landing-globe-container">
       <Maps
         apiKey={key}
@@ -62,6 +61,7 @@ function LandingPage() {
         </div>
       </div>
     </div>
+    </APIProvider>
   )
 }
 

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { googleMapsAPIKey } = require('../../config');
+const { googleMapsAPIKey, dashboardMapId, landingMapId } = require('../../config');
 
 router.post('/key', (req, res) => {
-  res.json({ googleMapsAPIKey });
+  res.json({ googleMapsAPIKey, dashboardMapId, landingMapId });
 });
 
 module.exports = router;

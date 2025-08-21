@@ -1,46 +1,27 @@
-import { useRef, useEffect, useState } from 'react';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import { useEffect, useState, useRef } from 'react';
+import { Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
+import './Maps.css';
 
 const defaultContainerStyle = { width: '400px', height: '400px' };
 const defaultCenter = { lat: 20, lng: -103.771556 };
-const libraries = ['places'];
 
 const Maps = ({
-  apiKey,
   config = {},
   onMapClick,
-  rotate = false
+  rotate = false,
+  tripMarkers = [],
+  activityMarkers = []
 }) => {
-  const mapRef = useRef(null);
-  const [mapLoaded, setMapLoaded] = useState(false); //check that map loaded
+  const [viewState, setViewState] = useState({ //set controlled state
+    center: config.center || defaultCenter,
+    zoom: config.zoom || 8
+  })
 
   const containerStyle = config.containerStyle || defaultContainerStyle;
-  const center = config.center || defaultCenter;
-  const zoom = config.zoom || 8;
-  const options = config.options || {};
-
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: apiKey,
-    libraries,
-    version: 'weekly'
-  });
+  const userInteractedRef = useRef(false); //check for movement
 
   useEffect(() => {
-    if (!rotate) {
-      console.log('Rotation disabled');
-      return;
-    }
-
-    if (!mapRef.current) {
-      console.log('Map ref not available');
-      return;
-    }
-
-    if (!mapLoaded) {
-      console.log('Map not loaded yet');
-      return;
-    }
+    if (!rotate) return;
 
     let angle = 0;
     const centerLat = 20;
@@ -49,54 +30,91 @@ const Maps = ({
 
     const rotationInterval = setInterval(() => {
       angle += rotationSpeed;
-      const lng = (angle % 360) - 180; //set to value between -180 and 180
+      const lng = (angle % 360) - 180;
 
-      try {
-        if (mapRef.current) {
-          mapRef.current.panTo({ lat: centerLat, lng });
-        }
-      } catch (error) {
-        console.error('Rotation error:', error);
-      }
+      setViewState(prev => ({
+        ...prev,
+        center: { lat: centerLat, lng }
+      }));
     }, updateInterval);
 
     return () => clearInterval(rotationInterval);
+  }, [rotate]);
 
-  }, [rotate, mapLoaded])
+  useEffect(() => {
+    if (config.center && !userInteractedRef.current) {
+      setViewState(prev => ({
+        ...prev,
+        center: config.center,
+        zoom: config.zoom || prev.zoom
+      }));
+    }
+  }, [config.center, config.zoom]);
 
-  const onLoad = (mapInstance) => {
-    mapRef.current = mapInstance;
-    setMapLoaded(true);
+  const onMove = ({center, zoom}) => {
+    if (!rotate) { //don't worry about rotate
+      userInteractedRef.current = true;
+
+      setViewState({center, zoom});
+    }
   };
 
-  const onUnmount = () => { //remove ref
-    mapRef.current = null;
-    setMapLoaded(false);
+  const handleMarkerHover = (markerHandler, event) => {
+    if (markerHandler) {
+      markerHandler(event);
+    }
   };
 
-  if (loadError) {
-    console.error('Map did not load: ', loadError);
-    return (
-      <div>
-        <h3>Failed to load Map</h3>
-      </div>
-    );
-  }
-
-  if (!isLoaded) {
-    return <div>Loading Map...</div>;
-  }
 
   return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={zoom}
-      options={options}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
-      onClick={onMapClick}
-    />
+      <Map
+        mapId={config.mapId}
+        style={containerStyle}
+        center={viewState.center}
+        zoom={viewState.zoom}
+        onCameraChanged={onMove}
+        onClick={onMapClick}
+        gestureHandling="greedy"
+        disableDefaultUI={true}
+        zoomControl={false}
+      >
+        {tripMarkers.map((marker) => (
+          <AdvancedMarker
+            key={`trip-${marker.id}`}
+            position={marker.position}
+            title={marker.title}
+            onClick={marker.onClick}
+            onMouseEnter={(event) => handleMarkerHover(marker.onMouseEnter, event)}
+            onMouseLeave={(event) => handleMarkerHover(marker.onMouseLeave, event)}
+          >
+            <Pin
+              background={'#176982'}
+              borderColor={'#135a6b'}
+              glyphColor={'white'}
+            />
+          </AdvancedMarker>
+        ))}
+
+        {activityMarkers.map((marker) => {
+        if (!marker.id || !marker.position || !marker.number) {
+          console.warn('Invalid marker data:', marker);
+          return null;
+        }
+
+        return (
+          <AdvancedMarker
+            key={`activity-${marker.id}-${marker.number}`} //make unique vs trip marker
+            position={marker.position}
+            title={`${marker.number}. ${marker.title}`}
+            onClick={marker.onClick}
+          >
+            <div className={`numbered-marker ${marker.isSelected ? 'selected' : ''}`}>
+              <div className="marker-number">{marker.number}</div>
+            </div>
+          </AdvancedMarker>
+        );
+      })}
+      </Map>
   );
 };
 

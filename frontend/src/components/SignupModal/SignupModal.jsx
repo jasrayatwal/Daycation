@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useModal } from '../../context/Modal';
 import * as sessionActions from '../../store/session';
 import './SignupModal.css';
 
 function SignupModal() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -22,13 +24,15 @@ function SignupModal() {
       return dispatch(
         sessionActions.signup({
           email,
-          username,
           firstName,
           lastName,
           password
         })
       )
-        .then(closeModal)
+        .then(() => {
+          closeModal();
+          navigate('/dashboard');
+        })
         .catch(async (res) => {
           const data = await res.json();
           if (data?.errors) {

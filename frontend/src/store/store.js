@@ -2,10 +2,14 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import sessionReducer from './session';
 import mapsReducer from './maps';
+import tripsReducer from './trips';
+import aiReducer from './ai';
 
 const rootReducer = combineReducers({
   session: sessionReducer,
-  maps: mapsReducer
+  maps: mapsReducer,
+  trips: tripsReducer,
+  ai: aiReducer
 });
 
 let enhancer;

@@ -1,0 +1,59 @@
+.trip-tooltip {
+  position: fixed;
+  background: white;
+  border-radius: 10px;
+  min-width: 300px;
+  max-width: 500px;
+  transform: translateY(-100%); /*make top right*/
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid black;
+}
+
+.tooltip-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color);
+  max-width: 500px;
+}
+
+.tooltip-content {
+  padding: 15px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-row .label {
+  font-weight: 500;
+}
+
+.detail-row .value {
+  font-weight: 400;
+  text-align: right;
+}
+
+.tooltip-notes {
+  padding: 12px 16px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-notes p {
+  margin: 0;
+  font-size: 13px;
+}

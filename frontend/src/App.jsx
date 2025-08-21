@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
 import LandingPage from './components/LandingPage/LandingPage';
+import Dashboard from './components/Dashboard/Dashboard';
+import { Modal } from './context/Modal';
 import * as sessionActions from './store/session';
 
 function Layout() {
@@ -19,6 +21,7 @@ function Layout() {
     <>
       <Navigation isLoaded={isLoaded} />
       {isLoaded && <Outlet />}
+      <Modal />
     </>
   );
 }
@@ -30,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <LandingPage />
+      },
+      {
+        path: '/dashboard',
+        element: <Dashboard />
       }
     ]
   }

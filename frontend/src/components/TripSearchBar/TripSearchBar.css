@@ -1,0 +1,15 @@
+.trip-search-bar {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  z-index: 1000;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.place-picker-input {
+  width: 100%;
+}
