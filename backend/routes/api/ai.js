@@ -266,8 +266,8 @@ router.post('/generate-trip', requireAuth, async (req, res, next) => {
 
     const tripData = {
       ...object,
-      refLat: refLat,
-      refLng: refLng,
+      refLat: parseFloat(refLat),
+      refLng: parseFloat(refLng),
       activities: geocodedActivities
     }
 

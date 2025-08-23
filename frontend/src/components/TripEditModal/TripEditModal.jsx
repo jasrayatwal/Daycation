@@ -50,8 +50,8 @@ function TripEditModal({ trip }) {
         };
 
         const coordinates = {
-          lat: trip.refLat,
-          lng: trip.refLng
+          lat: parseFloat(trip.refLat),
+          lng: parseFloat(trip.refLng)
         };
 
         const newTrip = await dispatch(generateTrip(trip.location, requirements, coordinates));
@@ -88,8 +88,8 @@ function TripEditModal({ trip }) {
         name: generatedTrip.name,
         date: generatedTrip.date,
         location: generatedTrip.location,
-        refLat: generatedTrip.refLat,
-        refLng: generatedTrip.refLng,
+        refLat: parseFloat(generatedTrip.refLat),
+        refLng: parseFloat(generatedTrip.refLng),
         startTime: generatedTrip.startTime,
         endTime: generatedTrip.endTime,
         groupSize: generatedTrip.groupSize,
