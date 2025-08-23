@@ -1,6 +1,7 @@
 const express = require('express');
 const { requireAuth } = require('../../utils/auth');
-const { Trip, Activity, BudgetItem } = require('../../db/models');
+const { Trip, Activity, BudgetItem, sequelize } = require('../../db/models');
+const { Op } = require('sequelize');
 
 const router = express.Router();
 
@@ -194,7 +195,24 @@ router.delete('/:activityId', requireAuth, async (req, res, next) => {
       return res.status(404).json({message: "Activity couldn't be found"});
     }
 
+    const tripId = activity.tripId;
+    const deletedOrderNumber = activity.orderNumber;
+
     await activity.destroy();
+
+    await Activity.update(
+      {
+        orderNumber: sequelize.literal('orderNumber - 1')
+      },
+      {
+        where: {
+          tripId: tripId,
+          orderNumber: {
+            [Op.gt]: deletedOrderNumber
+          }
+        }
+      }
+    );
 
     return res.status(200).json({
       message: "Activity successfully deleted"

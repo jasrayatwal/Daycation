@@ -24,7 +24,10 @@
   font-size: 50px;
   font-weight: bold;
   color: var(--text-color);
-  margin: 0 0 2rem 0;
+  margin: 0 0 5px 0;
+  background: rgba(213, 214, 220, 0.8);
+  padding: 10px;
+  border-radius: 20px;
 }
 
 .search-container {
@@ -43,4 +46,8 @@
 
 .location-search::placeholder {
   color: var(--placeholder-text-color);
+}
+
+.landing-place-picker {
+  width: 400px;
 }

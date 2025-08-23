@@ -42,7 +42,78 @@ router.post('/generate-trip', requireAuth, async (req, res, next) => {
 
     console.log('Generating trip for:', location, 'with preferences:', requirements, 'coordinates:', coordinates);
 
-    const prompt = `
+    const prompt = `Generate a day trip plan for ${location} as a JSON object.
+
+      User Preferences:
+      - Date: ${requirements.date || new Date().toISOString().split('T')[0]}
+      - Budget: ${requirements.budget} USD
+      - Group size: ${requirements.groupSize || 2}
+      - Start: ${requirements.startTime || '09:00:00'}
+      - End: ${requirements.endTime || '18:00:00'}
+      - Pace: ${requirements.tripPace || 'balanced'} (relaxed, balanced, packed)
+      - Type: ${requirements.tripType || 'custom'} (family, friends, shopping, nature, foodie, adventure, cultural, history, romantic, custom)
+      - Transport: ${requirements.transportation || 'mixed'} (walk, transit, drive, ridehail, mixed)
+
+      CRITICAL: Respond with valid JSON:
+
+      {
+        "name": "Trip name",
+        "date": "${requirements.date || new Date().toISOString().split('T')[0]}",
+        "location": "${location}",
+        "refLat": 39.7392,
+        "refLng": -104.9903,
+        "startTime": ${requirements.startTime || '09:00:00'}, respond with format "HH:MM:SS"
+        "endTime": ${requirements.endTime || '18:00:00'}, respond with format "HH:MM:SS"
+        "groupSize": ${requirements.groupSize || 2},
+        "primaryTransportation": ${requirements.transportation || 'mixed'} (walk, transit, drive, ridehail, mixed).
+        "budget": ${requirements.budget || 50},
+        "tripPace": ${requirements.tripPace || 'balanced'} (relaxed, balanced, packed).
+        "tripType": ${requirements.tripType || 'custom'} (family, friends, shopping, nature, foodie, adventure, cultural, history, romantic, custom),
+        "notes": "Brief trip description",
+        "activities": [
+          {
+            "title": "Activity name",
+            "orderNumber": 1,
+            "type": "place",
+            "address": "123 Main St, City, State, ZIP",
+            "lat": 0,
+            "lng": 0,
+            "startTime": "09:00:00", respond with format "HH:MM:SS"
+            "endTime": "10:30:00", respond with format "HH:MM:SS"
+            "durationMin": 90,
+            "transportType": "walk",
+            "costEstimate": 15,
+            "notes": "Visitor tips"
+          }
+        ]
+      }
+
+      Rules for Activities:
+      1. Must be in ${location}, in realistic travel order, respecting transport mode.
+      2. Use real, specific, mappable addresses (street #, street, city, state, ZIP).
+      3. Time-appropriate (meals during meal times, attractions open hours).
+      4. Include mix of attractions, food, and local culture based on tripType.
+      5. Number of activities depends on tripPace (relaxed < balanced < packed).
+      6. Ensure budget total aligns with ${requirements.budget}.
+      7. Each activity has exact start & end time (HH:MM:SS), no overlaps.
+      8. Max amount of time for transport via walking is 20 minutes, max for public transport and driving is 30 minutes. Make sure to have realistic activity and time estimate for transport from each activity. ASSUME NO TRAFFIC if driving.
+        - Do not make the walking distance over 1 mile.
+        - First and last activity can not be any method of transportation
+      9. First/last activity cannot be transport; only add transport when needed.
+
+      Duration Guidelines (adjust by pace):
+      - Meals: 30-90m
+      - Museums: 60-120m
+      - Shopping: 60-90m
+      - Outdoor: 90-180m
+      - Sightseeing: 30-60m
+      - Transport: 5-30m (adjust timing based on method of transport, follow the guidelines to have walking no more than 20 minutes, public transport and driving no more than 30 minutes). ASSUME NO TRAFFIC if driving
+
+      IMPORTANT:
+      - All fields required. No missing start/end times.
+      - First activity is not food unless tripType is "foodie".
+      - If place has no address (beach/park), use nearest valid mappable address.`;
+/*`
       You are an expert travel planning assistant. Generate a detailed day trip plan for ${location}.
 
       User preferences:
@@ -55,21 +126,40 @@ router.post('/generate-trip', requireAuth, async (req, res, next) => {
       - Trip type: ${requirements.tripType || 'general'} (MUST be one of: family, friends, shopping, nature, foodie, adventure, cultural, history, romantic, custom)
       - Transportation: ${requirements.transportation || 'mixed'} (walking, public_transit, car, mixed)
 
-      You must include ALL of these fields in your trip response:
-      - name: Trip name
-      - date: ${requirements.date} format: 'YYYY-MM-DD'
-      - location: ${location}
-      - refLat: Latitude coordinate
-      - refLng: Longitude coordinate
-      - startTime: Trip start time (${requirements.startTime || '09:00:00'})
-      - endTime: Trip end time (${requirements.endTime || '18:00:00'})
-      - groupSize: ${requirements.groupSize || 2}
-      - primaryTransportation: ${requirements.transportation || 'mixed'}
-      - budget: ${requirements.budget}
-      - tripPace: ${requirements.tripPace || 'balanced'} (MUST be one of: relaxed, balanced, packed)
-      - tripType: ${requirements.tripType || 'general'} (MUST be one of: family, friends, shopping, nature, foodie, adventure, cultural, history, romantic, custom)
-      - notes: Brief trip description
-      - activities: Array of activities
+      CRITICAL: You MUST respond with a valid JSON object that matches this structure:
+
+      {
+        "name": "Trip name",
+        "date": "${requirements.date || new Date().toISOString().split('T')[0]}",
+        "location": "${location}",
+        "refLat": 39.7392,
+        "refLng": -104.9903,
+        "startTime": "${requirements.startTime || '09:00:00'},
+        "endTime": "${requirements.endTime || '18:00:00'},
+        "groupSize": ${requirements.groupSize || 2},
+        "primaryTransportation": "${requirements.transportation || 'mixed'}",
+        "budget": ${requirements.budget || 50},
+        "tripPace": "${requirements.tripPace || 'balanced'}", (MUST be one of: relaxed, balanced, packed)
+        "tripType": "${requirements.tripType || 'custom'}", (MUST be one of: family, friends, shopping, nature, foodie, adventure, cultural, history, romantic, custom)
+        "notes": "Brief trip description",
+        "activities": [ (array of activities)
+          {
+            "title": "Activity name",
+            "orderNumber": 1,
+            "type": "place",
+            "address": "123 Main St, Denver, CO 80202",
+            "lat": 0,
+            "lng": 0,
+            "startTime": "09:00:00",
+            "endTime": "10:30:00",
+            "durationMin": 90,
+            "transportType": "walk",
+            "costEstimate": 15,
+            "notes": "Activity description"
+          }
+        ]
+      }
+
 
       Create a realistic, geographically logical day trip plan. Activities should be:
       1. In the given city location provided and in a sensible travel order with sensible locations based on the transportation type(s).
@@ -130,7 +220,7 @@ router.post('/generate-trip', requireAuth, async (req, res, next) => {
       If a location is something like a beach/park with no mappable address provide the best/closest mappable address for that location/activity.
 
       Generate a complete itinerary where every activity has a clear start and end time. Include a time buffer between activities for a reasonable travel time based on the method of transportation that will be used. (${requirements.transportation || 'mixed'} in this case).
-      `;
+      `;*/
 
     console.log('Sending prompt to AI...');
 

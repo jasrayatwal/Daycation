@@ -6,12 +6,14 @@ import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginModal/LoginModal';
 import SignupFormModal from '../SignupModal/SignupModal';
 import { useNavigate } from 'react-router-dom';
+import { useModal } from '../../context/Modal';
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
   const ulRef = useRef();
   const navigate = useNavigate();
+  const { closeModal } = useModal();
 
   const toggleMenu = (e) => {
     e.stopPropagation(); // Keep from bubbling up to document and triggering closeMenu
@@ -34,11 +36,16 @@ function ProfileButton({ user }) {
 
   const closeMenu = () => setShowMenu(false);
 
-  const logout = (e) => {
+  const logout = async (e) => {
     e.preventDefault();
-    dispatch(sessionActions.logout());
-    closeMenu();
-    navigate('/');
+    try {
+      await dispatch(sessionActions.logout());
+      closeMenu();
+      closeModal();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");

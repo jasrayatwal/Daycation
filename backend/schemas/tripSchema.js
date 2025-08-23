@@ -8,8 +8,8 @@ const ActivitySchema = z.object({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
   startTime: z.string().min(8).max(8),
-  endTime: z.string().min(8).max(8).optional(),
-  durationMin: z.number().min(5).max(480).optional(),
+  endTime: z.string().min(8).max(8),
+  durationMin: z.number().min(5).max(480),
   transportType: z.enum(['walk', 'transit', 'drive', 'ridehail']).optional(),
   costEstimate: z.number().min(0).max(99999999.99).optional().default(0),
   notes: z.string().max(1000).optional()
@@ -29,7 +29,7 @@ const TripSchema = z.object({
   budget: z.number().min(0).max(9999.99).default(0),
   tripType: z.enum(['family', 'friends', 'shopping', 'nature', 'foodie', 'adventure', 'cultural', 'history', 'romantic', 'custom']).default('custom'),
   notes: z.string().max(1000).optional(),
-  activities: z.array(ActivitySchema).min(1).max(20),
+  activities: z.array(ActivitySchema).min(1).max(15),
 
   //generation
   estimatedDuration: z.string().optional(),

@@ -4,11 +4,16 @@ function TripHover({ trip, position, visible }) {
   if (!visible || !trip) return null;
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
+  if (!dateString) return '';
+
+  const [year, month, day] = dateString.split('T')[0].split('-');
+  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
   }
 
   const formatTime = (timeString) => {

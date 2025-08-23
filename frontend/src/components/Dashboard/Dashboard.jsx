@@ -37,6 +37,40 @@ function Dashboard() {
     }
   }, [dispatch, user]);
 
+  useEffect(() => {
+  const pendingLocation = sessionStorage.getItem('pendingSearchLocation');
+  const pendingPlaceData = sessionStorage.getItem('pendingPlaceData');
+
+  if (pendingLocation && user) {
+    sessionStorage.removeItem('pendingSearchLocation');
+    sessionStorage.removeItem('pendingPlaceData');
+
+    let placeData = null;
+    if (pendingPlaceData) {
+      try {
+        placeData = JSON.parse(pendingPlaceData);
+      } catch (e) {
+        console.error('Error parsing stored place data:', e);
+      }
+    }
+
+    setTimeout(() => {
+      setModalContent(
+        <TripGenerationModal
+          searchLocation={pendingLocation}
+          placeData={placeData}
+        />
+      );
+    }, 500);
+  }
+}, [user, setModalContent]);
+
+  if (!key || !dashboardMapId) {
+      return (
+        <div>Loading dashboard...</div>
+      )
+    }
+
   const handleTripMarkerHover = (trip, event) => {
     setHoveredTrip(trip);
     setMousePosition({x: event.pageX, y: event.pageY});

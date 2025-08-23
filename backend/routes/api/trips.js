@@ -206,7 +206,8 @@ router.put('/:tripId', requireAuth, async (req, res, next) => {
       tripPace,
       tripType,
       notes,
-      status
+      status,
+      activities = []
     } = req.body;
 
     const trip = await Trip.findOne({
@@ -239,6 +240,33 @@ router.put('/:tripId', requireAuth, async (req, res, next) => {
       notes: notes || trip.notes,
       status: status || trip.status
     })
+
+    if (activities.length > 0) {
+      await Activity.destroy({
+        where: { tripId: tripId }
+      });
+
+      await Promise.all(
+        activities.map((activity, index) =>
+          Activity.create({
+            tripId: tripId,
+            orderNumber: activity.orderNumber || index + 1,
+            type: activity.type,
+            title: activity.title,
+            address: activity.address,
+            lat: activity.lat,
+            lng: activity.lng,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
+            durationMin: activity.durationMin,
+            transportType: activity.transportType,
+            costEstimate: activity.costEstimate || 0,
+            notes: activity.notes,
+            status: 'pending'
+          })
+        )
+      );
+    }
 
     const updatedTrip = await Trip.findOne({
       where: {id: tripId},

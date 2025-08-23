@@ -26,6 +26,10 @@ function TripActivityView({ trip, onBack }) {
     setSelectedActivity(null);
   }
 
+  const handleTripDeleted = () => {
+    onBack(); // Go back to dashboard when trip is deleted
+  }
+
   const tripData = currentTrip || trip;
 
   const activityMarkers = tripData?.activities ? tripData?.activities.map((activity) => ({
@@ -70,6 +74,7 @@ function TripActivityView({ trip, onBack }) {
           activities={tripData?.activities}
           selectedActivity={selectedActivity}
           onActivitySelect={handleActivitySelect}
+          onTripDeleted={handleTripDeleted}
         />
       </div>
     </div>
